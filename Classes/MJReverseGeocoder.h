@@ -44,7 +44,7 @@
     NSMutableData *receivedData;
 }
 
-@property (nonatomic, assign) id <MJReverseGeocoderDelegate> delegate;
+@property (nonatomic, retain) id <MJReverseGeocoderDelegate> delegate;
 @property (nonatomic, readonly) CLLocationCoordinate2D coordinate;
 
 
