@@ -28,17 +28,15 @@
  */
 
 #import "NSString+SBJSON.h"
-#import "SBJsonParser.h"
 
 @implementation NSString (NSString_SBJSON)
 
 - (id)JSONValue
 {
-    SBJsonParser *jsonParser = [SBJsonParser new];
-    id repr = [jsonParser objectWithString:self];
+    NSError *error;
+    id repr = [NSJSONSerialization JSONObjectWithData:[self dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
     if (!repr)
-        NSLog(@"-JSONValue failed. Error trace is: %@", [jsonParser errorTrace]);
-    [jsonParser release];
+        NSLog(@"-JSONValue failed. Error trace is: %@", error);
     return repr;
 }
 
