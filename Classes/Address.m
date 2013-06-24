@@ -54,7 +54,7 @@
  */
 + (NSString *)addressComponent:(NSString *)component inAddressArray:(NSArray *)array ofType:(NSString *)type{
 	int index = [array indexOfObjectPassingTest:^(id obj, NSUInteger idx, BOOL *stop){
-        NSArray *types = (NSArray*)[obj objectForKey:@"types"];
+        NSArray *types = (NSArray*)obj[@"types"];
         if ([types isKindOfClass:[NSArray class]] && types.count) {
             return [types[0] isEqualToString:component];
         }
@@ -65,7 +65,7 @@
 	
 	if(index == NSNotFound) return nil;
 	
-	return [[array objectAtIndex:index] valueForKey:type];
+	return [array[index] valueForKey:type];
 }
 
 

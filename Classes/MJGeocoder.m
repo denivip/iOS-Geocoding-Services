@@ -94,7 +94,7 @@
     // inform the user
     NSLog(@"Connection failed! Error - %@ %@",
           [error localizedDescription],
-          [[error userInfo] objectForKey:NSURLErrorFailingURLStringErrorKey]);
+          [error userInfo][NSURLErrorFailingURLStringErrorKey]);
     
     [connection release];
     [receivedData release];
@@ -119,14 +119,14 @@
 	NSString *status = [resultDict valueForKey:@"status"];
 	if([status isEqualToString:@"OK"]){
 		//if successful, build results array
-		NSArray *foundLocations = [resultDict objectForKey:@"results"];
+		NSArray *foundLocations = resultDict[@"results"];
 		results = [NSMutableArray arrayWithCapacity:[foundLocations count]];
 		
 		for (NSDictionary *location in foundLocations) {
-			NSArray *firstResultAddress = [location objectForKey:@"address_components"];
+			NSArray *firstResultAddress = location[@"address_components"];
 			
-            double lat = [[[[location objectForKey:@"geometry"] objectForKey:@"location"] valueForKey:@"lat"] doubleValue];
-            double lng = [[[[location objectForKey:@"geometry"] objectForKey:@"location"] valueForKey:@"lng"] doubleValue];
+            double lat = [[location[@"geometry"][@"location"] valueForKey:@"lat"] doubleValue];
+            double lng = [[location[@"geometry"][@"location"] valueForKey:@"lng"] doubleValue];
             
             CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(lat, lng);
 			Address *resultAddress = [[[Address alloc] initWithCoordinate:coord] autorelease];

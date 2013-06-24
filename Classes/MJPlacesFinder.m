@@ -54,7 +54,7 @@
     
     //check if dummy API key hasn't been replaced
     if([API_KEY isEqualToString:@"<YOUR_API_KEY_HERE>"]){
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"Undefined API key!" forKey:NSLocalizedDescriptionKey];
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"Undefined API key!"};
         NSError *error = [NSError errorWithDomain:@"MJPlacesFinderError" code:6 userInfo:userInfo];
         
         [delegate placesFinder:self didFailWithError:error];
@@ -105,7 +105,7 @@
     // inform the user
     NSLog(@"Connection failed! Error - %@ %@",
           [error localizedDescription],
-          [[error userInfo] objectForKey:NSURLErrorFailingURLStringErrorKey]);
+          [error userInfo][NSURLErrorFailingURLStringErrorKey]);
     
     [connection release];
     [receivedData release];
@@ -135,7 +135,7 @@
     NSString *status = [resultDict valueForKey:@"status"];
 	if([status isEqualToString:@"OK"]){
         //if successful, build results array
-		NSArray *foundLocations = [resultDict objectForKey:@"results"];
+		NSArray *foundLocations = resultDict[@"results"];
 		results = [NSMutableArray arrayWithCapacity:[foundLocations count]];
         
         for(NSDictionary *placeResult in foundLocations){
@@ -152,7 +152,7 @@
             [foundPlace setGoogleIconPath:[placeResult valueForKey:@"icon"]];
             [foundPlace setGoogleRef:[placeResult valueForKey:@"reference"]];
             [foundPlace setRating:[[placeResult valueForKey:@"rating"] doubleValue]];
-            [foundPlace setTypes:[placeResult objectForKey:@"types"]];
+            [foundPlace setTypes:placeResult[@"types"]];
             
             [results addObject:foundPlace];
         }

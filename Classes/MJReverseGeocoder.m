@@ -95,7 +95,7 @@
     // inform the user
     NSLog(@"Connection failed! Error - %@ %@",
           [error localizedDescription],
-          [[error userInfo] objectForKey:NSURLErrorFailingURLStringErrorKey]);
+          [error userInfo][NSURLErrorFailingURLStringErrorKey]);
     
     [connection release];
     [receivedData release];
@@ -121,7 +121,7 @@
 	if([status isEqualToString:@"OK"]){
 		//if successful
 		//get first element as array
-		NSArray *firstResultAddress = [[[resultDict objectForKey:@"results"] objectAtIndex:0] objectForKey:@"address_components"];
+		NSArray *firstResultAddress = resultDict[@"results"][0][@"address_components"];
 		
 		Address *resultAddress = [[[Address alloc] init] autorelease];
 		resultAddress.streetNumber = [Address addressComponent:@"street_number" inAddressArray:firstResultAddress ofType:@"long_name"];
