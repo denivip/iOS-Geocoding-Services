@@ -38,13 +38,9 @@
 
 @protocol MJReverseGeocoderDelegate;
 
-@interface MJReverseGeocoder : NSObject {
-	id <MJReverseGeocoderDelegate> delegate;
-	CLLocationCoordinate2D coordinate;
-    NSMutableData *receivedData;
-}
+@interface MJReverseGeocoder : NSObject
 
-@property (nonatomic, retain) id <MJReverseGeocoderDelegate> delegate;
+@property (nonatomic, weak) id <MJReverseGeocoderDelegate> delegate;
 @property (nonatomic, readonly) CLLocationCoordinate2D coordinate;
 
 

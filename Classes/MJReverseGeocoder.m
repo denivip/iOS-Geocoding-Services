@@ -36,13 +36,15 @@
 #import "MJReverseGeocoder.h"
 #import "JSON.h"
 
+@interface MJReverseGeocoder ()
+@property (nonatomic, strong) NSMutableData *receivedData;
+@end
+
 @implementation MJReverseGeocoder
 
-@synthesize coordinate, delegate;
-
-- (id)initWithCoordinate:(CLLocationCoordinate2D)coord{	
+- (id)initWithCoordinate:(CLLocationCoordinate2D)coord{
 	if(self = [[MJReverseGeocoder alloc] init]){
-		coordinate = coord;
+		_coordinate = coord;
 	}
 	return self;
 }
@@ -53,7 +55,7 @@
 - (void)start{
     //build url string using coordinate
 	NSString *urlString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=true",
-						   coordinate.latitude, coordinate.longitude];
+						   _coordinate.latitude, _coordinate.longitude];
     
     //build request URL
     NSURL *requestURL = [NSURL URLWithString:[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
@@ -67,11 +69,11 @@
     NSURLConnection *connection=[[NSURLConnection alloc] initWithRequest:geocodingRequest delegate:self];
     if(connection){
         //connection valid, so init data holder
-        receivedData = [[NSMutableData data] retain];
+        _receivedData = [NSMutableData data];
     }else{
         //connection failed, tell delegate
         NSError *error = [NSError errorWithDomain:@"MJGeocoderError" code:5 userInfo:nil];
-        [delegate reverseGeocoder:self didFailWithError:error];
+        [_delegate reverseGeocoder:self didFailWithError:error];
     }
 }
 
@@ -79,7 +81,7 @@
  *  Reset data when a new response is received
  */
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response{
-    [receivedData setLength:0];
+    [_receivedData setLength:0];
 }
 
 /*
@@ -87,7 +89,7 @@
  */
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-    [receivedData appendData:data];
+    [_receivedData appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -96,9 +98,6 @@
     NSLog(@"Connection failed! Error - %@ %@",
           [error localizedDescription],
           [error userInfo][NSURLErrorFailingURLStringErrorKey]);
-    
-    [connection release];
-    [receivedData release];
 }
 
 /*
@@ -108,22 +107,18 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
 	//get response
-	NSString *geocodingResponse = [[NSString alloc] initWithData:receivedData encoding:NSUTF8StringEncoding];
-    
-    [connection release];
-    [receivedData release];
+	NSString *geocodingResponse = [[NSString alloc] initWithData:_receivedData encoding:NSUTF8StringEncoding];
     
 	//result as dictionary dictionary
 	NSDictionary *resultDict = [geocodingResponse JSONValue];
-    [geocodingResponse release];
-    
+
 	NSString *status = [resultDict valueForKey:@"status"];
 	if([status isEqualToString:@"OK"]){
 		//if successful
 		//get first element as array
 		NSArray *firstResultAddress = resultDict[@"results"][0][@"address_components"];
 		
-		Address *resultAddress = [[[Address alloc] init] autorelease];
+		Address *resultAddress = [[Address alloc] init];
 		resultAddress.streetNumber = [Address addressComponent:@"street_number" inAddressArray:firstResultAddress ofType:@"long_name"];
 		resultAddress.route = [Address addressComponent:@"route" inAddressArray:firstResultAddress ofType:@"long_name"];
 		resultAddress.city = [Address addressComponent:@"locality" inAddressArray:firstResultAddress ofType:@"long_name"];
@@ -131,7 +126,7 @@
 		resultAddress.postalCode = [Address addressComponent:@"postal_code" inAddressArray:firstResultAddress ofType:@"short_name"];
 		resultAddress.countryName = [Address addressComponent:@"country" inAddressArray:firstResultAddress ofType:@"long_name"];
 		
-		[delegate reverseGeocoder:self didFindAddress:resultAddress];
+		[_delegate reverseGeocoder:self didFindAddress:resultAddress];
 	}else{
 		//if status code is not OK
 		NSError *error = nil;
@@ -153,12 +148,8 @@
 			error = [NSError errorWithDomain:@"MJGeocoderError" code:4 userInfo:nil];
 		}
 		
-		[delegate reverseGeocoder:self didFailWithError:error];
+		[_delegate reverseGeocoder:self didFailWithError:error];
 	}
-}
-
--(void)dealloc{
-    [super dealloc];
 }
 
 @end
