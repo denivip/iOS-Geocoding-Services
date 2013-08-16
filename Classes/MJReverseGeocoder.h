@@ -38,6 +38,8 @@
 
 @protocol MJReverseGeocoderDelegate;
 
+typedef void (^MJReverseGeocoderCompletionBlock)(Address *address, NSError *error);
+
 @interface MJReverseGeocoder : NSObject
 
 @property (nonatomic, weak) id <MJReverseGeocoderDelegate> delegate;
@@ -46,6 +48,7 @@
 
 - (id)initWithCoordinate:(CLLocationCoordinate2D)coord;
 - (void)start;
+- (void)startOnCompletion:(MJReverseGeocoderCompletionBlock)completion;
 
 @end
 

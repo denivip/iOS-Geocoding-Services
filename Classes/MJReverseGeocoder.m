@@ -38,6 +38,7 @@
 
 @interface MJReverseGeocoder ()
 @property (nonatomic, strong) NSMutableData *receivedData;
+@property (nonatomic, copy) MJReverseGeocoderCompletionBlock completion;
 @end
 
 @implementation MJReverseGeocoder
@@ -49,10 +50,17 @@
 	return self;
 }
 
+- (void)start
+{
+    [self startOnCompletion:nil];
+}
+
 /*
  *	Opens a URL Connection and calls Google's JSON reverse geocoding service
  */
-- (void)start{
+- (void)startOnCompletion:(MJReverseGeocoderCompletionBlock)completion{
+    self.completion = completion;
+
     //build url string using coordinate
 	NSString *urlString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=true",
 						   _coordinate.latitude, _coordinate.longitude];
@@ -74,6 +82,9 @@
         //connection failed, tell delegate
         NSError *error = [NSError errorWithDomain:@"MJGeocoderError" code:5 userInfo:nil];
         [_delegate reverseGeocoder:self didFailWithError:error];
+        if (self.completion) {
+            self.completion(nil, error);
+        }
     }
 }
 
@@ -127,6 +138,9 @@
 		resultAddress.countryName = [Address addressComponent:@"country" inAddressArray:firstResultAddress ofType:@"long_name"];
 		
 		[_delegate reverseGeocoder:self didFindAddress:resultAddress];
+        if (self.completion) {
+            self.completion(resultAddress, nil);
+        }
 	}else{
 		//if status code is not OK
 		NSError *error = nil;
@@ -149,6 +163,9 @@
 		}
 		
 		[_delegate reverseGeocoder:self didFailWithError:error];
+        if (self.completion) {
+            self.completion(nil, error);
+        }
 	}
 }
 
