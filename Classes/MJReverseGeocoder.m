@@ -145,21 +145,26 @@
 		//if status code is not OK
 		NSError *error = nil;
 		
+        NSDictionary *userInfo;
+		if (status) {
+            userInfo = @{ NSLocalizedDescriptionKey : status };
+        }
+
 		if([status isEqualToString:@"ZERO_RESULTS"])
 		{
-			error = [NSError errorWithDomain:@"MJGeocoderError" code:1 userInfo:nil];
+			error = [NSError errorWithDomain:@"MJGeocoderError" code:1 userInfo:userInfo];
 		}
 		else if([status isEqualToString:@"OVER_QUERY_LIMIT"])
 		{
-			error = [NSError errorWithDomain:@"MJGeocoderError" code:2 userInfo:nil];
+			error = [NSError errorWithDomain:@"MJGeocoderError" code:2 userInfo:userInfo];
 		}
 		else if([status isEqualToString:@"REQUEST_DENIED"])
 		{
-			error = [NSError errorWithDomain:@"MJGeocoderError" code:3 userInfo:nil];
+			error = [NSError errorWithDomain:@"MJGeocoderError" code:3 userInfo:userInfo];
 		}
 		else if([status isEqualToString:@"INVALID_REQUEST"])
 		{
-			error = [NSError errorWithDomain:@"MJGeocoderError" code:4 userInfo:nil];
+			error = [NSError errorWithDomain:@"MJGeocoderError" code:4 userInfo:userInfo];
 		}
 		
 		[_delegate reverseGeocoder:self didFailWithError:error];
