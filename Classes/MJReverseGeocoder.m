@@ -34,7 +34,6 @@
 
 
 #import "MJReverseGeocoder.h"
-#import "JSON.h"
 
 @interface MJReverseGeocoder ()
 @property (nonatomic, strong) NSMutableData *receivedData;
@@ -117,11 +116,7 @@
  */
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-	//get response
-	NSString *geocodingResponse = [[NSString alloc] initWithData:_receivedData encoding:NSUTF8StringEncoding];
-    
-	//result as dictionary dictionary
-	NSDictionary *resultDict = [geocodingResponse JSONValue];
+    NSDictionary *resultDict = [NSJSONSerialization JSONObjectWithData:_receivedData options:0 error:nil];
 
 	NSString *status = [resultDict valueForKey:@"status"];
 	if([status isEqualToString:@"OK"]){
