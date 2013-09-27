@@ -83,6 +83,7 @@
         [_delegate reverseGeocoder:self didFailWithError:error];
         if (self.completion) {
             self.completion(nil, error);
+            self.completion = nil;
         }
     }
 }
@@ -135,6 +136,7 @@
 		[_delegate reverseGeocoder:self didFindAddress:resultAddress];
         if (self.completion) {
             self.completion(resultAddress, nil);
+            self.completion = nil;
         }
 	}else{
 		//if status code is not OK
@@ -165,6 +167,7 @@
 		[_delegate reverseGeocoder:self didFailWithError:error];
         if (self.completion) {
             self.completion(nil, error);
+            self.completion = nil;
         }
 	}
 }
