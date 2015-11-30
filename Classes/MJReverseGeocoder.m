@@ -61,7 +61,7 @@
     self.completion = completion;
 
     //build url string using coordinate
-	NSString *urlString = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=true",
+	NSString *urlString = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/geocode/json?latlng=%f,%f&sensor=true",
 						   _coordinate.latitude, _coordinate.longitude];
     
     //build request URL
